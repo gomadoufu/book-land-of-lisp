@@ -3,6 +3,7 @@
 (defparameter *big* 100)
 
 ; letでローカル変数定義
+; (let (定義) (使うとこ)) ... 使うとこはなくてもいい
 (let 
     (gomadoufu 100))
 (let 
@@ -17,6 +18,7 @@
     (ash 
         (+ *small* *big*) -1))
 
+; setfで変数を書き換えられる
 (defun smaller 
     () 
     (setf *big* 
