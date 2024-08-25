@@ -1,4 +1,6 @@
 ;; ifコマンド
+;; (if 条件リスト リストA リストB) 
+;; 条件リストが空でなければ リストA でなければ リストB
 ;; 空リストは偽
 (if '
     () 'i-am-true 'i-am-false)
@@ -23,13 +25,15 @@
 (defvar *number-is-odd* nil)
 (when 
     (oddp 5) 
-    (setf *number-is-odd* t) 'odd-number)
+    (setf *number-is-odd* t) 
+    'odd-number)
 
 ;; unless
 ;; 条件が偽の時に、囲まれた式をすべて実行
 (unless 
     (oddp 4) 
-    (setf *number-is-odd* nil) 'even-number)
+    (setf *number-is-odd* nil)
+    'even-number)
 
 ;; cond
 ;; 複数の文が書けるし、複数の分岐が書ける
@@ -81,3 +85,21 @@
         (otherwise 
             (princ 
                 (list name "さんっていうんですね。")))))
+
+;; and と or
+;; 短絡評価
+(and (oddp 5) (oddp 7) (oddp 9))
+;; -> T
+(or (oddp 5) (oddp 4) (oddp 2)) 
+;; -> T
+
+;; 真理以上のものを返す関数
+(if (member 1 '(3 4 1 5))
+    'one-is-in-the-list
+    'one-is-not-in-the-list) ;; -> T
+(member 1 '(3 4 1 5)) ;; -> (1, 5)
+;; Tだけとかでもいいはずなのに、たくさん返してくれてて嬉しい
+
+;; 比較
+;; 1. シンボル(クォートがついた文字列)同士は、常にeqで比較すべし
+;; 2. シンボル同士の比較でなければ、equalを使え
