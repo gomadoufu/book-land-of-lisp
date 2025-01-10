@@ -286,25 +286,6 @@ n))
         (known-city-nodes)
         (known-city-edges)))
 
-(defun handle-direction 
-    (pos charging)
-    (let 
-        (
-            (edge 
-                (assoc pos 
-                    (cdr 
-                        (assoc *player-pos* *congestion-city-edges*)))))
-        (if edge 
-            (handle-new-place edge pos charging)
-            (princ "That location does not exist!"))))
-
-(defun walk 
-    (pos) 
-    (handle-direction pos nil))
-(defun charge 
-    (pos) 
-    (handle-direction pos t))
-
 (defun handle-new-place 
     (edge pos charging)
     (let* 
@@ -340,6 +321,25 @@ n))
                         (princ new-pos)
                         (handle-new-place nil new-pos nil)
 ))))))
+
+(defun handle-direction 
+    (pos charging)
+    (let 
+        (
+            (edge 
+                (assoc pos 
+                    (cdr 
+                        (assoc *player-pos* *congestion-city-edges*)))))
+        (if edge 
+            (handle-new-place edge pos charging)
+            (princ "That location does not exist!"))))
+
+(defun walk 
+    (pos) 
+    (handle-direction pos nil))
+(defun charge 
+    (pos) 
+    (handle-direction pos t))
 
 (defun new-game
     () 
