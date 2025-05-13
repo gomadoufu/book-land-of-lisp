@@ -1,3 +1,5 @@
+(load "/Users/gomadoufu/ghq/github.com/gomadoufu/book-land-of-lisp/macro.lisp")
+
 ;;; svgを出力するDSLを作成する
 
 (defun print-tag (name alst closingp)
@@ -10,16 +12,6 @@
         alst)
   (princ #\>))
 
-;; 補助関数pairs
-(defun pairs (lst)
-  (labels ((f (lst acc)
-             (split lst
-                    (if tail
-                        (f (cdr tail) (cons (cons head (car tail)) acc))
-                        (reverse acc))
-                    (reverse acc))))
-    (f lst nil)))
-
 (defmacro tag (name atts &body body)
   `(progn (print-tag ',name
                      (list ,@(mapcar (lambda (x)
@@ -28,3 +20,56 @@
                      nil)
           ,@body
           (print-tag ',name nil t)))
+
+;; svgマクロ
+(defmacro svg (width height &body body)
+  `(tag svg (xmlns "http://ww.w3.org/2000/svg"
+                   "xmlns:xlink" "http://www.w3.org/1999/xlink" height ,height width ,width)
+     ,@body))
+
+(defun brightness (col amt)
+  (mapcar (lambda (x)
+            (min 255 (max 0 (+ x amt))))
+          col))
+
+(defun svg-style (color)
+  (format nil
+          "~{fill:rgb(~a,~a,~a);stroke:rgb(~a,~a,~a)~}"
+          (append color
+                  (brightness color -100))))
+
+;;; いろんな形を描く
+
+(defun circle (center radius color)
+  (tag circle (   cx (car center)
+                  cy (cdr center)
+                  r radius
+                  style (svg-style color))))
+
+(defun polygon (points color)
+  (tag polygon (points (format nil "~{~a,~a ~}"
+                               (mapcan (lambda (tp)
+                                         (list (car tp) (cdr tp)))
+                                       points))
+                       style (svg-style color))))
+
+(defun random-walk (value length)
+  (unless (zerop length)
+    (cons value
+          (random-walk (if (zerop (random 2))
+                           (1- value)
+                           (1+ value))
+                       (1- length)))))
+
+;; ランダムウォークを画像にする
+(with-open-file (*standard-output* "/Users/gomadoufu/ghq/github.com/gomadoufu/book-land-of-lisp/random_walk.svg"
+                                   :direction :output
+                                   :if-exists :supersede)
+  (svg 400 200 (loop repeat 10
+                     do (polygon (append '((0 . 200))
+                                         (loop for x from 0
+                                               for y in (random-walk 100 400)
+                                               collect (cons x y))
+                                         '((400 . 200)))
+                                 (loop repeat 3
+                                       collect (random 256))))))
