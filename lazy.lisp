@@ -1,4 +1,8 @@
-;; 遅延評価をするマクロ
+;;;
+;;; Lazy lists library
+;;;
+
+;; a simple implementation of lazy
 (defmacro lazy (&body body)
   (let ((forced (gensym))
         (value (gensym)))
@@ -10,12 +14,10 @@
            (setf ,forced t))
          ,value))))
 
-;; 遅延評価された値を強制的に評価する関数
+;; a simple implementation of force
 (defun force (lazy-value)
   (funcall lazy-value))
 
-
-;;; 遅延リストライブラリ
 (defmacro lazy-cons (a d)
   `(lazy (cons ,a ,d)))
 
@@ -24,11 +26,6 @@
 
 (defun lazy-cdr (x)
   (cdr (force x)))
-
-(defparameter *integers*
-  (labels ((f (n)
-             (lazy-cons n (f (1+ n)))))
-    (f 1)))
 
 (defun lazy-nil ()
   (lazy nil))
@@ -57,7 +54,7 @@
   (labels ((f (lst-cur)
              (if (lazy-null lst-cur)
                  (force (lazy-mapcan fun (lazy-cdr lst)))
-                 (cons (lazy-car lst-cur) (lazy (f (lazy-cdr lst)))))))
+                 (cons (lazy-car lst-cur) (lazy (f (lazy-cdr lst-cur)))))))
     (lazy (unless (lazy-null lst)
             (f (funcall fun (lazy-car lst)))))))
 

@@ -51,7 +51,6 @@
   (fresh-line)
   (princ "choose your move:")
   (let ((moves (caddr tree)))
-    (format t ";; DEBUG: moves = ~S~%" (take-all moves))
     (labels ((print-moves (moves n)
                (unless (lazy-null moves)
                  (let* ((move (lazy-car moves))
