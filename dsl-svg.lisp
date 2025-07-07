@@ -1,7 +1,6 @@
 (load "/Users/gomadoufu/ghq/github.com/gomadoufu/book-land-of-lisp/macro.lisp")
 
 ;;; svgを出力するDSLを作成する
-
 (defun print-tag (name alst closingp)
   (princ #\<)
   (when closingp
@@ -25,7 +24,7 @@
 (defmacro svg (width height &body body)
   `(tag svg (xmlns "http://ww.w3.org/2000/svg"
                    "xmlns:xlink" "http://www.w3.org/1999/xlink" height ,height width ,width)
-     ,@body))
+        ,@body))
 
 (defun brightness (col amt)
   (mapcar (lambda (x)
